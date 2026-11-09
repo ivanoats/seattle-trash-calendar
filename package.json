@@ -1,0 +1,56 @@
+{
+  "name": "seattle-trash-calendar",
+  "version": "1.0.0",
+  "description": "Seattle collection dates to an iCalendar file",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "vite",
+    "dev:api": "tsx watch src/adapters/node.ts",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "lint": "eslint . && markdownlint README.md \"docs/**/*.md\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run build",
+    "deploy:cloudflare": "npm run build && wrangler deploy",
+    "dev:cloudflare": "npm run build && wrangler dev --local --ip 127.0.0.1 --port 8790",
+    "test:live": "node scripts/live-smoke.mjs",
+    "design:build": "panda codegen && panda cssgen --outfile styled-system/styles.css && node scripts/design.mjs",
+    "prepare": "npm run design:build",
+    "predev": "npm run design:build",
+    "prebuild": "npm run design:build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@pandacss/dev": "1.12.2",
+    "@playwright/test": "^1.65.0",
+    "@sustainablewebsites/verdant-design": "^0.1.1",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^10.14.0",
+    "ical.js": "^2.2.1",
+    "markdownlint-cli": "^0.50.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.159.0"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=24 <27"
+  }
+}

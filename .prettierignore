@@ -1,0 +1,11 @@
+dist
+coverage
+playwright-report
+test-results
+.wrangler
+package-lock.json
+
+worker-configuration.d.ts
+
+styled-system/
+public/verdant-theme-toggle.js

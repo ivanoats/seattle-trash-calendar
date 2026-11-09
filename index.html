@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Find your Seattle garbage, recycling, and compost collection dates and download a calendar file."
+    />
+    <meta name="theme-color" content="#163c50" />
+    <script src="/verdant-theme-toggle.js"></script>
+    <title>Seattle pickup — your collection calendar</title>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/" aria-label="Seattle pickup home"
+        ><span aria-hidden="true">▦</span> Seattle pickup</a
+      ><span>A community calendar tool</span>
+    </header>
+    <main id="main">
+      <section class="intro">
+        <h1>Put pickup day<br />on your calendar.</h1>
+        <p>
+          Garbage, recycling, and compost. Find your Seattle collection schedule
+          and take it with you.
+        </p>
+        <div class="bins" aria-hidden="true">
+          <div class="bin garbage"><span>Garbage</span></div>
+          <div class="bin recycle"><span>Recycling</span></div>
+          <div class="bin compost"><span>Compost</span></div>
+        </div>
+      </section>
+      <div class="workspace">
+        <section class="lookup" aria-labelledby="lookup-heading">
+          <h2 id="lookup-heading">Find your address</h2>
+          <p>
+            Use the street address where Seattle Public Utilities collects your
+            bins.
+          </p>
+          <form id="search-form">
+            <label for="address">Street address</label>
+            <div class="search-row">
+              <input
+                id="address"
+                name="address"
+                type="text"
+                autocomplete="street-address"
+                placeholder="e.g. 600 4th Ave"
+                minlength="3"
+                maxlength="160"
+                required
+                aria-describedby="privacy"
+              /><button id="search" type="submit">Find address</button>
+            </div>
+            <p id="privacy" class="hint">
+              Your address is sent to Seattle’s lookup through this app. We
+              don’t save it or ask for a utility login.
+            </p>
+          </form>
+          <p id="status" role="status" aria-live="polite"></p>
+          <p id="error" role="alert" hidden></p>
+          <div id="matches" hidden>
+            <h3>Choose your service address</h3>
+            <ul id="addresses"></ul>
+          </div>
+          <div id="options" hidden>
+            <h3 id="selected-address"></h3>
+            <fieldset>
+              <legend>Include in your calendar</legend>
+              <div id="services"></div>
+            </fieldset>
+            <button id="download" type="button">Download .ics calendar</button>
+            <p class="hint">
+              Import into Apple Calendar, Google Calendar, or Outlook. This is a
+              one-time download, not an updating subscription. Import into a
+              separate calendar to make replacing it easier.
+            </p>
+          </div>
+        </section>
+        <section class="preview" aria-labelledby="preview-heading">
+          <div class="preview-top">
+            <h2 id="preview-heading">Your next pickups</h2>
+            <span aria-hidden="true">▦</span>
+          </div>
+          <div id="empty">
+            <p class="empty-title">A little less to remember.</p>
+            <p>
+              Your upcoming collection dates will appear here after you choose
+              an address.
+            </p>
+          </div>
+          <p id="range"></p>
+          <ol id="collections"></ol>
+          <p id="preview-note" class="hint" hidden>
+            The download includes every returned date for the selected services.
+          </p>
+        </section>
+      </div>
+      <section class="notes">
+        <div>
+          <h2>Seattle’s dates, in your calendar</h2>
+          <p>
+            Dates come from Seattle’s collection lookup, including its scheduled
+            holiday changes. We don’t guess your recycling week or extend the
+            schedule beyond the dates Seattle returns.
+          </p>
+        </div>
+        <div>
+          <h2>Keep an eye on weather delays</h2>
+          <p>
+            The city says its calendar does not reflect weather delays. Check
+            <a
+              href="https://atyourservice.seattle.gov/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >SPU’s service updates</a
+            >
+            when conditions change.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <fieldset class="theme-picker" aria-label="Theme preference">
+        <legend>Theme</legend>
+        <div class="theme-options">
+          <label
+            ><input
+              type="radio"
+              name="theme-preference"
+              value="system"
+              checked
+            />System</label
+          >
+          <label
+            ><input
+              type="radio"
+              name="theme-preference"
+              value="light"
+            />Light</label
+          >
+          <label
+            ><input
+              type="radio"
+              name="theme-preference"
+              value="dark"
+            />Dark</label
+          >
+        </div>
+      </fieldset>
+      <p>
+        Made for Seattle neighbors. An independent tool, not a City of Seattle
+        service.
+      </p>
+      <a
+        href="https://myutilities.seattle.gov/eportal/#/accountlookup/calendar"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Open Seattle’s official lookup</a
+      >
+      <a href="https://verdant-design.org">Built with Verdant</a>
+    </footer>
+    <noscript
+      >This calendar maker needs JavaScript. You can still use the official
+      Seattle lookup linked above.</noscript
+    >
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
