@@ -405,3 +405,68 @@ footer {
   flex-direction: column;
   gap: var(--spacing-2);
 }
+
+/* Jimothy joins the existing bin artwork without shifting the form. */
+.jimothy {
+  position: absolute;
+  right: 340px;
+  bottom: 20px;
+  width: 160px;
+  margin: 0;
+  z-index: 1;
+}
+.jimothy a {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radii-md);
+}
+.jimothy img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.jimothy figcaption {
+  text-align: center;
+  color: var(--colors-accent);
+  font-size: var(--font-sizes-label);
+  line-height: var(--line-heights-label);
+  margin-top: var(--spacing-1);
+}
+.jimothy a:hover + figcaption {
+  text-decoration: underline;
+}
+@media (max-width: 850px) {
+  .jimothy {
+    right: 270px;
+    width: 100px;
+    bottom: 0;
+  }
+}
+@media (max-width: 650px) {
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 108px;
+    column-gap: var(--spacing-3);
+    align-items: center;
+  }
+  .intro h1 {
+    grid-column: 1 / -1;
+  }
+  .intro > p {
+    font-size: var(--font-sizes-body);
+    line-height: var(--line-heights-body);
+  }
+  .jimothy {
+    position: static;
+    width: 108px;
+  }
+}
+
+@media (min-width: 851px) and (max-width: 1100px) {
+  .jimothy {
+    right: 280px;
+    width: 124px;
+    bottom: 8px;
+  }
+}
