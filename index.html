@@ -69,9 +69,15 @@
             </div>
             <p id="privacy" class="hint">
               Your address is sent to Seattle’s lookup through this app. We
-              don’t save it or ask for a utility login.
+              don’t save it on our servers or ask for a utility login.
             </p>
           </form>
+          <div id="saved-address" hidden>
+            <p id="saved-label"></p>
+            <button id="forget-saved" type="button">
+              Forget saved address and start over
+            </button>
+          </div>
           <p id="status" role="status" aria-live="polite"></p>
           <p id="error" role="alert" hidden></p>
           <div id="matches" hidden>
@@ -80,6 +86,41 @@
           </div>
           <div id="options" hidden>
             <h3 id="selected-address"></h3>
+            <section
+              id="recycling-answer"
+              aria-labelledby="recycling-heading"
+              hidden
+              tabindex="-1"
+            >
+              <h2 id="recycling-heading"></h2>
+              <p id="recycling-detail"></p>
+              <p id="recycling-week" class="hint"></p>
+              <p class="hint">
+                Scheduled dates, not confirmation of collection. Check SPU
+                updates for weather delays.
+              </p>
+            </section>
+
+            <button id="change-address" type="button">Change address</button>
+            <label class="remember-label"
+              ><input
+                id="remember-address"
+                type="checkbox"
+                aria-describedby="remember-help"
+              />Remember this address on this device</label
+            >
+            <p id="remember-help" class="hint">
+              Saves this service address in this browser. On return, we’ll fetch
+              a fresh schedule from Seattle. Use only on a device you trust.
+            </p>
+            <button id="forget-address" type="button" hidden>
+              Forget saved address
+            </button>
+            <p id="remember-status" role="status"></p>
+            <h3>Keep these dates on your phone</h3>
+            <p>
+              Download your collection calendar so you can check it offline.
+            </p>
             <fieldset>
               <legend>Include in your calendar</legend>
               <div id="services"></div>

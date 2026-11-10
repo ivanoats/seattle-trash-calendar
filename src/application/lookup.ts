@@ -1,5 +1,6 @@
 import { CalendarError, normalizeCollections } from "../domain/calendar";
 import type { ScheduleProvider } from "./ports";
+import { recyclingWeek } from "../domain/recycling";
 export class Lookup {
   constructor(private readonly provider: ScheduleProvider) {}
   search(query: string) {
@@ -22,20 +23,17 @@ export class Lookup {
     )
       throw new CalendarError("Choose an address from the search results.");
     const result = await this.provider.schedule(id);
-    const today = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "America/Los_Angeles",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(new Date(result.fetchedAt));
-    const collections = normalizeCollections(result.collections).filter(
-      (c) => c.date >= today,
+    const normalized = normalizeCollections(result.collections);
+    const { today, weekStart } = recyclingWeek(normalized, result.fetchedAt);
+    const recentCollections = normalized.filter(
+      (c) => c.date >= weekStart && c.date < today,
     );
+    const collections = normalized.filter((c) => c.date >= today);
     if (!collections.length)
       throw new CalendarError(
         "Seattle returned no upcoming collections for this address. Check the official lookup.",
         404,
       );
-    return { ...result, collections };
+    return { ...result, collections, recentCollections };
   }
 }

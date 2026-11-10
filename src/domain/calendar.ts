@@ -8,6 +8,7 @@ export interface Schedule {
   calendarId: string;
   collections: Collection[];
   fetchedAt: string;
+  recentCollections?: Collection[];
 }
 export interface Address {
   id: string;

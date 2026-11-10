@@ -13,7 +13,9 @@ npm ci
 npm run dev
 ```
 
-Open <http://127.0.0.1:5173>. Vite serves the interface and forwards `/api` to a Node.js server on port 8788. Only explicit searches contact Seattle; typing does not send requests.
+Open <http://127.0.0.1:5173>. Vite serves the interface and forwards `/api` to a Node.js server on port 8788. Explicit searches contact Seattle; typing does not send requests. Opting in to remember an address stores its label and location identifier in this browser. Returning with a saved address automatically fetches a fresh schedule. Change or forget the saved address from the homepage. No schedule is cached for offline answers; the downloaded calendar provides offline access.
+
+The homepage answers the recycling-week question using Monday–Sunday weeks in Seattle time. Past dates returned for the current week support “was scheduled” wording, but are excluded from downloads. When only future dates are available, the answer describes the remainder of the week instead of inferring a past pickup.
 
 ## Verify
 

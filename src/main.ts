@@ -10,6 +10,8 @@ document
   .forEach((el) => (el.className = button({ variant: "primary" })));
 document.querySelector("#address")!.className = fieldInput();
 import { IcalWriter } from "./adapters/ical";
+import { RememberedAddress } from "./adapters/remembered-address";
+import { recyclingWeek } from "./domain/recycling";
 import type { Address, Schedule } from "./domain/calendar";
 const element = <T extends HTMLElement>(id: string) =>
   document.getElementById(id) as T;
@@ -20,6 +22,30 @@ const status = element("status");
 const error = element("error");
 let schedule: Schedule | undefined;
 let busy = false;
+let chosenAddress: Address | undefined;
+const remembered = new RememberedAddress(() => window.localStorage);
+const remember = element<HTMLInputElement>("remember-address");
+function renderSaved() {
+  const saved = remembered.read();
+  element("saved-address").hidden = !saved;
+  element("saved-label").textContent = saved
+    ? `Saved on this device: ${saved.label}`
+    : "";
+  element("forget-address").hidden = !saved;
+}
+function forgetAddress() {
+  if (!remembered.forget()) {
+    remember.checked = remembered.read()?.id === chosenAddress?.id;
+    showError(
+      "We couldn’t remove the saved address. Please clear this site’s data in your browser settings.",
+    );
+    return false;
+  }
+  remember.checked = false;
+  renderSaved();
+  element("remember-status").textContent = "Address forgotten on this device.";
+  return true;
+}
 const selected = () =>
   Array.from(
     document.querySelectorAll<HTMLInputElement>("#services input:checked"),
@@ -37,6 +63,14 @@ function setBusy(value: boolean) {
   input.disabled = value;
   element<HTMLButtonElement>("search").disabled = value;
   form.setAttribute("aria-busy", String(value));
+  for (const id of [
+    "change-address",
+    "forget-address",
+    "forget-saved",
+    "remember-address",
+  ]) {
+    element<HTMLButtonElement>(id).disabled = value;
+  }
   document
     .querySelectorAll<HTMLButtonElement>("#addresses button")
     .forEach((b) => (b.disabled = value));
@@ -60,6 +94,8 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 }
 function clearSchedule() {
   schedule = undefined;
+  chosenAddress = undefined;
+  element("recycling-answer").hidden = true;
   element("options").hidden = true;
   element("collections").replaceChildren();
   element("range").textContent = "";
@@ -94,6 +130,34 @@ function renderPreview() {
   element("empty").hidden = true;
   element("preview-note").hidden = !keys.length;
 }
+function renderRecycling() {
+  if (!schedule) return;
+  const answer = recyclingWeek(
+    [...schedule.collections, ...(schedule.recentCollections ?? [])],
+    schedule.fetchedAt,
+  );
+  const headings = {
+    today: "Recycling is scheduled for today.",
+    "this-week": "Yes, this is recycling week.",
+    passed: "This week’s recycling date has passed.",
+    later: "No recycling pickup scheduled for the rest of this week.",
+    unknown: "No upcoming recycling date available.",
+  };
+  element("recycling-heading").textContent = headings[answer.state];
+  element("recycling-detail").textContent = [
+    answer.state === "passed"
+      ? `Recycling was scheduled for ${dateLabel(answer.past!)}.`
+      : "",
+    answer.next
+      ? `Next recycling pickup: ${dateLabel(answer.next)}.`
+      : "Seattle returned no upcoming recycling dates. Check the official lookup.",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  element("recycling-week").textContent =
+    `Week of ${dateLabel(answer.weekStart)} – ${dateLabel(answer.weekEnd)} (Monday–Sunday, Seattle time). Checked ${dateLabel(answer.today)}.`;
+  element("recycling-answer").hidden = false;
+}
 async function choose(address: Address) {
   if (busy) return;
   setBusy(true);
@@ -102,6 +166,11 @@ async function choose(address: Address) {
   status.textContent = "Getting your collection dates from Seattle…";
   try {
     schedule = await post<Schedule>("/api/schedule", { id: address.id });
+    chosenAddress = address;
+    input.value = address.label;
+    remember.checked = remembered.read()?.id === address.id;
+    element("remember-status").textContent = "";
+    renderSaved();
     element("selected-address").textContent = address.label;
     element("matches").hidden = true;
     const container = element("services");
@@ -118,9 +187,10 @@ async function choose(address: Address) {
     }
     element("options").hidden = false;
     renderPreview();
+    renderRecycling();
     status.textContent =
       "Your calendar is ready. Choose which collections to include.";
-    element<HTMLButtonElement>("download").focus();
+    element("recycling-answer").focus();
   } catch (e) {
     showError(e instanceof Error ? e.message : "Unable to load this schedule.");
   } finally {
@@ -185,3 +255,40 @@ element("download").addEventListener("click", () => {
   status.textContent =
     "Calendar downloaded. Import the file into your calendar app.";
 });
+
+remember.addEventListener("change", () => {
+  if (!chosenAddress) return;
+  if (!remember.checked) {
+    forgetAddress();
+    return;
+  }
+  if (remembered.save(chosenAddress)) {
+    element("remember-status").textContent =
+      "Address saved in this browser. We’ll check Seattle again when you return.";
+  } else {
+    remember.checked = false;
+    element("remember-status").textContent =
+      "This browser couldn’t save your address. You can still use the calendar.";
+  }
+  renderSaved();
+});
+element("forget-address").addEventListener("click", forgetAddress);
+element("change-address").addEventListener("click", () => {
+  clearSchedule();
+  input.value = "";
+  status.textContent =
+    "Enter another address. A saved address stays saved until you forget it or remember a new one.";
+  input.focus();
+});
+element("forget-saved").addEventListener("click", () => {
+  if (!forgetAddress()) return;
+  clearSchedule();
+  input.value = "";
+  error.hidden = true;
+  status.textContent =
+    "Saved address removed. Enter an address to start again.";
+  input.focus();
+});
+renderSaved();
+const savedAddress = remembered.read();
+if (savedAddress) void choose(savedAddress);

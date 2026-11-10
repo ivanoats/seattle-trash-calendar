@@ -1,6 +1,6 @@
 # Architecture
 
-Seattle pickup converts SPU’s address-specific collection dates into a downloadable calendar. A resident searches for an address, selects the correct service location, and chooses which collection services to export. The app stores no address book or subscription state.
+Seattle pickup converts SPU’s address-specific collection dates into a downloadable calendar. A resident searches for an address, selects the correct service location, and chooses which collection services to export. The server stores no address book or subscription state. With explicit opt-in, a browser adapter stores a versioned service-address label and premise identifier in localStorage. No account token or schedule is stored. On return, the browser requests fresh data; a failed lookup shows an error and retains change/forget controls.
 
 ## System context
 
@@ -44,7 +44,7 @@ flowchart TB
 ```
 
 - **Domain:** collection types, dates, deduplication, ordering, and domain errors. No platform or networking dependencies.
-- **Application:** input validation and lookup orchestration; depends on a `ScheduleProvider` port. Filters past collections using the Seattle date at fetch time.
+- **Application:** input validation and lookup orchestration; depends on a `ScheduleProvider` port. Separates past collections using the Seattle date at fetch time. Current-week past dates are returned separately for the recycling answer and never included in calendar downloads.
 - **Driven adapter:** `SeattleProvider` validates upstream data with Zod and maps it into domain values. It receives injectable `fetch` and clock functions.
 - **Driving adapters:** HTTP requests and browser interactions invoke application behavior. Node and Worker entry points provide runtime wiring.
 - **Output adapter:** `IcalWriter` implements `CalendarWriter`, preserving date-only semantics and RFC 5545 text escaping, UTF-8 line folding, and CRLF endings.
