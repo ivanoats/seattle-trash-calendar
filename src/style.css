@@ -470,3 +470,29 @@ footer {
     bottom: 8px;
   }
 }
+
+#recycling-answer {
+  border-bottom: 1px solid var(--colors-border);
+  padding-bottom: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: 44px;
+  margin-top: var(--spacing-4);
+  cursor: pointer;
+}
+.remember-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--colors-accent);
+}
+#change-address,
+#forget-address,
+#forget-saved {
+  min-height: 44px;
+  text-decoration: underline;
+  color: var(--colors-accent);
+}

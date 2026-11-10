@@ -38,3 +38,24 @@ it("rejects empty and expired schedules", async () => {
   p.schedule.mockResolvedValue({ ...schedule, collections: [] });
   await expect(new Lookup(p).schedule("id")).rejects.toThrow("no upcoming");
 });
+it("preserves this week's past dates for the answer, but not the download", async () => {
+  const p = provider();
+  p.schedule.mockResolvedValue({
+    ...schedule,
+    fetchedAt: "2026-11-13T18:00:00Z",
+    collections: [
+      ...schedule.collections,
+      { date: "2026-11-06", service: "Recycle" },
+    ],
+  });
+  const result = await new Lookup(p).schedule("id");
+  expect(result.recentCollections).toContainEqual({
+    date: "2026-11-10",
+    service: "Recycle",
+  });
+  expect(result.recentCollections).not.toContainEqual({
+    date: "2026-11-06",
+    service: "Recycle",
+  });
+  expect(result.collections.every((c) => c.date >= "2026-11-13")).toBe(true);
+});
