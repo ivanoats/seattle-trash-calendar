@@ -1,4 +1,6 @@
-# Seattle pickup
+# Is it recycling week or not?
+
+I always forget. I don't want another fucking app to tell me. I've already got a calendar. 
 
 Find a Seattle Public Utilities service address, preview its collection dates, and download an iCalendar (`.ics`) file. Direct lookup is implemented through the same guest endpoints used by Seattle’s collection calendar. No personal utility login is required.
 
